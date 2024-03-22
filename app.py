@@ -1,7 +1,8 @@
+import os
 import streamlit as st
 from langchain.prompts import PromptTemplate
 from langchain.llms import CTransformers
-
+from langchain_community.llms import HuggingFaceEndpoint
 #Function to get the response back
 def getLLMResponse(form_input,email_sender,email_recipient,email_style):
     #llm = OpenAI(temperature=.9, model="text-davinci-003")
@@ -16,11 +17,13 @@ def getLLMResponse(form_input,email_sender,email_recipient,email_style):
 
 
     #C Transformers is the Python library that provides bindings for transformer models implemented in C/C++ using the GGML library
-
-    llm = CTransformers(model='models/llama-2-7b-chat.ggmlv3.q8_0.bin',     #https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGML/tree/main
-                    model_type='llama',
-                    config={'max_new_tokens': 256,
-                            'temperature': 0.01})
+    repo_id = "HuggingFaceH4/zephyr-7b-gemma-v0.1"
+    
+    llm = HuggingFaceEndpoint(repo_id=repo_id, max_length=128, temperature=0,token=HUGGINGFACEHUB_API_TOKEN)
+    # llm = CTransformers(model='models/llama-2-7b-chat.ggmlv3.q8_0.bin',     #https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGML/tree/main
+    #                 model_type='llama',
+    #                 config={'max_new_tokens': 256,
+    #                         'temperature': 0.01})
     
     
     #Template for building the PROMPT
@@ -48,6 +51,9 @@ st.set_page_config(page_title="Generate Emails",
                     layout='centered',
                     initial_sidebar_state='collapsed')
 st.header("Generate Emails 📧")
+
+
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
 
 form_input = st.text_area('Enter the email topic', height=275)
 
